@@ -5,10 +5,10 @@ import time
 from display import Display
 import numpy as np
 
-W = 1920//2
-H = 1080//2
+W = 1920*2//5
+H = 1080*2//5
 
-disp = Display(W, H)
+disp = Display(W, H*2)
 
 class FeatureExtractor(object):
     def __init__(self):
@@ -38,21 +38,23 @@ def process_frame(img_original, img_test):
 
 
     feats_original, kps_original, des_original = fe.extract(img_original)
-    feats_test, kps_test, des_test = fe.extract(img_test)
+    #feats_test, kps_test, des_test = fe.extract(img_test)
 
     for p in kps_original:
         u, v = map(lambda x: int(round(x)), p.pt)
         cv2.circle(img_original, (u,v), color = (0,255,0), radius = 3)
     
-    disp.paint(img_original)
+    disp.paint(np.concatenate((img_original, img_test)))
 
 cap_original = cv2.VideoCapture("original.mp4")
 cap_test = cv2.VideoCapture("test.mp4")
 
 if __name__ == "__main__":
     while cap_original.isOpened() and cap_test.isOpened():
+
         ret_original, frame_original = cap_original.read()
         ret_test, frame_test = cap_test.read()
+
         if ret_original == True and ret_test == True:
             process_frame(frame_original, frame_test)
         else:
