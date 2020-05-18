@@ -45,10 +45,7 @@ def percent_error(feats_original, feats_test):
     temp_x = abs(test_x - original_x)/original_x
     temp_y = abs(test_y - original_y)/original_y
 
-    mean = np.mean([temp_x, temp_y])
-    
-    return mean * 100
-
+    return (temp_x + temp_y)*100
 def process_frame(img_original, img_test, accuracy_range):
 
     img_original = cv2.resize(img_original, (W, H))
@@ -65,6 +62,8 @@ def process_frame(img_original, img_test, accuracy_range):
     for p2 in kps_test:
         a, b = map(lambda y: int(round(y)), p2.pt)
         cv2.circle(img_test, (a, b), color = (0,255,0), radius = 3)
+    
+    #check for accuracy
 
     if len(feats_test) > len(feats_original):
         for x in range(len(feats_original) - 1):
@@ -74,13 +73,20 @@ def process_frame(img_original, img_test, accuracy_range):
         for x in range(len(feats_test) - 1):
             if abs(feats_original[x][0][0] - feats_test[x][0][0]) < accuracy_range and abs(feats_original[x][0][1] - feats_test[x][0][1]) < accuracy_range: 
                 diff.append(percent_error(feats_original[x][0], feats_test[x][0]))
+    
+    #display image
 
     disp.paint(img_test, img_original)
+
+#capture video
 
 cap_original = cv2.VideoCapture("original.mp4")
 cap_test = cv2.VideoCapture("test.mp4")
 
+#main function
+
 if __name__ == "__main__":
+    
     accuracy_range = int(sys.argv[1])
 
     while cap_original.isOpened() and cap_test.isOpened():
