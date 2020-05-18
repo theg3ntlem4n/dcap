@@ -4,6 +4,7 @@ import cv2
 import time
 from display import Display
 import numpy as np
+import sys
 
 W = 1920*2//5
 H = 1080*2//5
@@ -48,8 +49,7 @@ def percent_error(feats_original, feats_test):
     
     return mean * 100
 
-def process_frame(img_original, img_test):
-    accuracy_range = 20
+def process_frame(img_original, img_test, accuracy_range):
 
     img_original = cv2.resize(img_original, (W, H))
     img_test = cv2.resize(img_test, (W, H))
@@ -81,13 +81,14 @@ cap_original = cv2.VideoCapture("original.mp4")
 cap_test = cv2.VideoCapture("test.mp4")
 
 if __name__ == "__main__":
+    accuracy_range = int(sys.argv[1])
 
     while cap_original.isOpened() and cap_test.isOpened():
         ret_original, frame_original = cap_original.read()
         ret_test, frame_test = cap_test.read()
 
         if ret_original == True and ret_test == True:
-            process_frame(frame_original, frame_test)
+            process_frame(frame_original, frame_test, accuracy_range)
         else:
             print(100 - np.mean(diff))
             break
