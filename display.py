@@ -1,15 +1,19 @@
 import sdl2
 import sdl2.ext
+import numpy as np
 
 class Display(object):
     def __init__(self, W, H):
         sdl2.ext.init()
 
         self.W, self.H = W, H
-        self.window = sdl2.ext.Window("SLAM", size = (W, H), position=(-500, -500))
+        self.window = sdl2.ext.Window("SLAM", size = (W, H), position=(0, 0))
         self.window.show()
 
-    def paint(self, img):
+    def paint(self, img_test, img_original):
+
+        img = np.concatenate((img_test, img_original))
+
         #junk
         events = sdl2.ext.get_events()
         for event in events:

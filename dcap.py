@@ -38,13 +38,17 @@ def process_frame(img_original, img_test):
 
 
     feats_original, kps_original, des_original = fe.extract(img_original)
-    #feats_test, kps_test, des_test = fe.extract(img_test)
+    feats_test, kps_test, des_test = fe.extract(img_test)
 
     for p in kps_original:
         u, v = map(lambda x: int(round(x)), p.pt)
         cv2.circle(img_original, (u,v), color = (0,255,0), radius = 3)
     
-    disp.paint(np.concatenate((img_original, img_test)))
+    for p2 in kps_test:
+        a, b = map(lambda y: int(round(y)), p2.pt)
+        cv2.circle(img_test, (a, b), color = (0,255,0), radius = 3)
+
+    disp.paint(img_test, img_original)
 
 cap_original = cv2.VideoCapture("original.mp4")
 cap_test = cv2.VideoCapture("test.mp4")
