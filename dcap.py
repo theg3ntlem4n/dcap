@@ -11,6 +11,7 @@ W = 1920*2//5
 H = 1080*2//5
 
 diff = []
+high_error = []
 
 disp = Display(W, H*2)
 
@@ -30,6 +31,8 @@ def percent_error(feats_original, feats_test):
 
 def process_frame(img_original, img_test, accuracy_range):
 
+    diff_frame = []
+
     img_original = cv2.resize(img_original, (W, H))
     img_test = cv2.resize(img_test, (W, H))
 
@@ -45,19 +48,27 @@ def process_frame(img_original, img_test, accuracy_range):
         a, b = map(lambda y: int(round(y)), p2.pt)
         cv2.circle(img_test, (a, b), color = (0,255,0), radius = 3)
 
-    print(str(len(feats_test))+ ", " + str(len(feats_original))) 
-    
     #check for accuracy
 
     if len(feats_test) > len(feats_original):
         for x in range(len(feats_original) - 1):
             if abs(feats_original[x][0][0] - feats_test[x][0][0]) < accuracy_range and abs(feats_original[x][0][1] - feats_test[x][0][1]) < accuracy_range: 
                 diff.append(percent_error(feats_original[x][0], feats_test[x][0]))
+                diff_frame.append(percent_error(feats_original[x][0], feats_test[x][0]))
+
+                
     else:
         for x in range(len(feats_test) - 1):
             if abs(feats_original[x][0][0] - feats_test[x][0][0]) < accuracy_range and abs(feats_original[x][0][1] - feats_test[x][0][1]) < accuracy_range: 
                 diff.append(percent_error(feats_original[x][0], feats_test[x][0]))
-    
+                diff_frame.append(percent_error(feats_original[x][0], feats_test[x][0]))
+
+    #if np.mean(diff_frame) > 15:
+     #   print("shaky")
+
+    #else:
+     #   print("accurate")
+
     #display image
 
     disp.paint(img_test, img_original)
@@ -67,20 +78,38 @@ def process_frame(img_original, img_test, accuracy_range):
 cap_original = cv2.VideoCapture("original.mp4")
 cap_test = cv2.VideoCapture("test.mp4")
 
+#get duration of videos
+
+fps_original = cap_original.get(cv2.CAP_PROP_FPS)
+frame_count_original = int(cap_original.get(cv2.CAP_PROP_FRAME_COUNT))
+duration_original = frame_count_original/fps_original
+
+fps_test = cap_test.get(cv2.CAP_PROP_FPS)
+frame_count_test = int(cap_test.get(cv2.CAP_PROP_FRAME_COUNT))
+duration_test = frame_count_test/fps_test
+
+frame = 0
+
 #main function
 
 if __name__ == "__main__":
     
-    accuracy_range = int(sys.argv[1])
+    if len(sys.argv) < 2:
+        accuracy_range = 50
+    else:
+        accuracy_range = int(sys.argv[1])
 
     while cap_original.isOpened() and cap_test.isOpened():
         ret_original, frame_original = cap_original.read()
         ret_test, frame_test = cap_test.read()
 
+        frame += 1
+
         if ret_original == True and ret_test == True:
             process_frame(frame_original, frame_test, accuracy_range)
         else:
             print(100 - np.mean(diff))
+            print(high_error)
             break
 
  
