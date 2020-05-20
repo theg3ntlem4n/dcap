@@ -15,6 +15,8 @@ disp = Display(W, H*2)
 
 fe = FeatureExtractor()
 
+diff = []
+
 def process_frame(img_original, img_test, accuracy_range):
 
     img_original = cv2.resize(img_original, (W, H))
@@ -34,7 +36,7 @@ def process_frame(img_original, img_test, accuracy_range):
 
     #check for accuracy
 
-    diff = check_accuracy(feats_test, feats_original, accuracy_range)
+    diff.extend(check_accuracy(feats_test, feats_original, accuracy_range))
 
     #display image
 
@@ -82,7 +84,7 @@ if __name__ == "__main__":
         if ret_original == True and ret_test == True:
             process_frame(frame_original, frame_test, accuracy_range)
         else:
-            print(100 - np.mean(diff))
+            print(round(100 - np.mean(diff), 2))
             break
 
  
