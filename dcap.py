@@ -39,6 +39,11 @@ def process_frame(img_original, img_test, accuracy_range):
         a, b = map(lambda y: int(round(y)), p2.pt)
         test_coords.append([a, b])
 
+    #contour test points
+
+    original_coords = contour_random(original_coords)
+    test_coords = contour_random(test_coords)
+
     #draw test points
 
     for point in original_coords:
