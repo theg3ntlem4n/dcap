@@ -21,6 +21,22 @@ fe = FeatureExtractor()
 diff = []
 
 def process_frame(img_original, img_test, accuracy_range):
+    
+    #contour via opencv built-in contour function
+
+    imggray_original = cv2.cvtColor(img_original, cv2.COLOR_BGR2GRAY)
+    imggray_test = cv2.cvtColor(img_test, cv2.COLOR_BGR2GRAY)
+    
+    ret_original, thresh_original = cv2.threshold(imggray_original, 127, 255, 0)
+    ret_test, thresh_test = cv2.threshold(imggray_test, 127, 255, 0)
+
+    contours_original, hierarchy_original = cv2.findContours(thresh_original, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+    contours_test, hierarchy_test = cv2.findContours(thresh_test, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+
+    cv2.drawContours(img_original, contours_original, -1, (0, 255, 0), 2)
+    cv2.drawContours(img_test, contours_test, -1, (0, 255, 0), 2)
+
+    #contour through goodFeaturesToTrack
 
     original_coords = []
     test_coords = []
@@ -41,16 +57,16 @@ def process_frame(img_original, img_test, accuracy_range):
 
     #contour test points
 
-    original_coords = contour_random(original_coords)
-    test_coords = contour_random(test_coords)
+    #original_coords = contour_random(original_coords)
+    #test_coords = contour_random(test_coords)
 
     #draw test points
 
-    for point in original_coords:
-        cv2.circle(img_original, (point[0], point[1]), color = (0,255,0), radius = 3)
+    #for point in original_coords:
+     #   cv2.circle(img_original, (point[0], point[1]), color = (0,255,0), radius = 3)
     
-    for point2 in test_coords:
-        cv2.circle(img_test, (point2[0], point2[1]), color = (0,255,0), radius = 3)
+    #for point2 in test_coords:
+     #   cv2.circle(img_test, (point2[0], point2[1]), color = (0,255,0), radius = 3)
 
     #check for accuracy
 
