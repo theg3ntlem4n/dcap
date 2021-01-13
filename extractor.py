@@ -21,8 +21,7 @@ class FeatureExtractor(object):
         matches = None
         if self.last is not None:
             matches = self.bf.match(des, self.last['des'])
-            #print(matches)        
-
+            
         self.last = {'kps': kps, 'des':des}
 
         return feats, kps, des, matches

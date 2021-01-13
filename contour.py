@@ -1,4 +1,5 @@
 import random
+import cv2
 
 def contour(feats):
 
@@ -18,9 +19,18 @@ def contour(feats):
 
     return temp
 
-def contour_random(feats):
-    for x in range(100):
-        feats.remove(random.choice(feats))
+def bad_contour(contours):
+    temp = []
 
-    return feats
+    for c in contours:
+        peri = cv2.arcLength(c, True)
+        approx = cv2.approxPolyDP(c, 0.015*peri, True)
 
+        if not len(approx) == 2:
+            temp.append(c)
+
+    return temp
+
+
+    
+    
